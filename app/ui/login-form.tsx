@@ -1,13 +1,36 @@
 'use client';
+import axios from 'axios';
 import { lusitana } from '@/app/ui/fonts';
 import { ArrowRightIcon, AtSymbolIcon ,KeyIcon} from '@heroicons/react/20/solid';
 import { Button } from './button';
-//import { useActionState } from 'react';
-//import { authenticate } from '@/app/lib/actions';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 export default function LoginForm() {
-  //const [errorMessage, formAction, isPending] = useActionState(authenticate, undefined,);
+  const [username,setUsername]= useState('');
+  const [password,setPassword] =useState('');
+  const [iserr,setError]= useState(false)
+  const [emsg,setEmsg]= useState('')
+  const router = useRouter();
+  const handleSubmit = async (e:React.FormEvent)=>{
+    e.preventDefault();
+    try{
+      const res = await axios.post('/api/login',{username,password})
+        console.log('Login successful:', res.data);
+      if(res.status===200)
+      {
+        router.push('/dashboard')
+        router.refresh();
+      }
+    }catch (error) {
+      // Handle error response
+      console.error('Login failed:', error);
+      setError(true);
+      setEmsg('Login failed. Please check your credentials and try again.');
+    }
+  }
   return (
-    <form  className="space-y-3">
+    <form  onSubmit ={handleSubmit} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -28,6 +51,7 @@ export default function LoginForm() {
                 type="username"
                 name="username"
                 placeholder="rero123"
+                onChange={(e)=>{setUsername(e.target.value)}}
               />
             </div>
             <div className="mt-4">
@@ -46,6 +70,7 @@ export default function LoginForm() {
                 placeholder="Enter password"
                 required
                 minLength={6}
+                onChange={(e)=>{setPassword(e.target.value)}}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
@@ -55,6 +80,7 @@ export default function LoginForm() {
             Login
             <ArrowRightIcon className="ml-2 h-5 w-5" />
           </Button>
+          {iserr && <p className='text-red-500'>{emsg}</p>}
           <div
           className="flex h-8 items-end space-x-1"
           aria-live="polite"
