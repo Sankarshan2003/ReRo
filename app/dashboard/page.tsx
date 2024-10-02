@@ -1,10 +1,18 @@
-'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
 
-export default function Dashboard() {
+//import { useEffect, useState } from 'react';
+import { redirect } from 'next/navigation';
+//import axios from 'axios';
+import checkCred from '../functions/functions';
+
+export default async function Page() {
+  const res = await checkCred()
+  console.log(res)
+  if(res['status']===false)
+  {
+    redirect('/')
+  }
+  /*
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -13,6 +21,7 @@ export default function Dashboard() {
       try {
         const response = await axios.get('/api/check');
         if (response.status === 200) {
+
           setLoading(false);
         } else {
           router.push('/login');
@@ -29,11 +38,8 @@ export default function Dashboard() {
   if (loading) {
     return <div>Loading...</div>;
   }
-
+*/
   return (
-    <div>
-      <h1>Welcome to your Dashboard</h1>
-      {/* Add your dashboard content here */}
-    </div>
-  );
+    <p>Divvvvvvvvv</p>
+  )
 }

@@ -5,7 +5,8 @@ import { ArrowRightIcon, AtSymbolIcon ,KeyIcon} from '@heroicons/react/20/solid'
 import { Button } from './button';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import Cookies from 'js-cookie'
+import { setCookie } from 'cookies-next';
 export default function LoginForm() {
   const [username,setUsername]= useState('');
   const [password,setPassword] =useState('');
@@ -19,15 +20,42 @@ export default function LoginForm() {
         console.log('Login successful:', res.data);
       if(res.status===200)
       {
+        const token = res.data.access_token
+        console.log(token)
+        setCookie('token', token, { maxAge: 60 * 60 * 24, secure: true, sameSite: 'strict' });
         router.push('/dashboard')
-        router.refresh();
+      }else{
+        console.log(res.data)
+        setError(true);
+        setEmsg(res.data['detail']['message']+' '+res.data['detail']['timeslot_start']+' '+res.data['detail']['timeslot_end'])
       }
     }catch (error) {
       // Handle error response
-      console.error('Login failed:', error);
+      console.error(error);
       setError(true);
-      setEmsg('Login failed. Please check your credentials and try again.');
+      if (axios.isAxiosError(error) && error.response) {
+        switch (error.response.status) {
+          case 400:
+            setEmsg('Bad Request. Please check your input.');
+            break;
+          case 401:
+            setEmsg('Unauthorized. Please check your credentials.');
+            break;
+          case 403:
+            setEmsg('Forbidden. You do not have permission to access this resource.');
+            break;
+          case 409:
+            setEmsg('Please wait for your time ');
+            break;
+          case 500:
+            setEmsg('Internal Server Error. Please try again later.');
+            break;
+          default:
+            setEmsg('An unexpected error occurred.');
+            break;
+        }
     }
+  }
   }
   return (
     <form  onSubmit ={handleSubmit} className="space-y-3">
