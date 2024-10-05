@@ -1,11 +1,12 @@
 'use client';
 import axios from 'axios';
+
 import { lusitana } from '@/app/ui/fonts';
-import { ArrowRightIcon, AtSymbolIcon ,KeyIcon} from '@heroicons/react/20/solid';
+import { ArrowRightIcon, AtSymbolIcon ,KeyIcon,ClockIcon} from '@heroicons/react/20/solid';
 import { Button } from './button';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie'
+//import Cookies from 'js-cookie'
 import { setCookie } from 'cookies-next';
 export default function LoginForm() {
   const [username,setUsername]= useState('');
@@ -20,9 +21,9 @@ export default function LoginForm() {
         console.log('Login successful:', res.data);
       if(res.status===200)
       {
-        const token = res.data.access_token
+        const token:string = res.data.access_token
         console.log(token)
-        setCookie('token', token, { maxAge: 60 * 60 * 24, secure: true, sameSite: 'strict' });
+        setCookie('JWTtoken', token, { maxAge: 60 * 60 * 24, secure: false,sameSite:'lax'});
         router.push('/dashboard')
       }else{
         console.log(res.data)
@@ -108,7 +109,11 @@ export default function LoginForm() {
             Login
             <ArrowRightIcon className="ml-2 h-5 w-5" />
           </Button>
-          {iserr && <p className='text-red-500'>{emsg}</p>}
+          <Button  className="mt-4 flex items-center justify-center" >
+            Check Timeslot
+            <ClockIcon className="ml-2 h-5 w-5" />
+          </Button>
+          {iserr && <p className='mt-4 text-red-500'>{emsg}</p>}
           <div
           className="flex h-8 items-end space-x-1"
           aria-live="polite"

@@ -1,6 +1,5 @@
 import { NextResponse,NextRequest } from 'next/server';
 import axios from 'axios';
-import { cookies } from 'next/headers';
 export async function POST(request:NextRequest) {
   const { username, password } = await request.json();
   try {
@@ -12,14 +11,6 @@ export async function POST(request:NextRequest) {
         'Content-Type': 'multipart/form-data'
       }
     });
-    cookies().set({
-        name: 'token',
-        value: response.data.token,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 3600 // 1 hour
-      });
     // Forward the response from the Python backend
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {

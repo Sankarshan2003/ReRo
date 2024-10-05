@@ -2,8 +2,8 @@ import { cookies } from 'next/headers';
 import axios from 'axios';
 
 const checkCred = async () => {
-  const token = cookies().get('token')?.value;
-
+  const token = cookies().get('JWTtoken')?.value;
+  console.log(token)
   if (!token) {
     return { status: false, msg: 'Token not found in cookies' };
   }
@@ -14,7 +14,16 @@ const checkCred = async () => {
         'Authorization': `Bearer ${token}`
       }
     });
-
+    console.log(response.data)
+    //Remove this later
+    if(response.data['username']==='root')
+    {
+      return { status: true, msg: 'Authenticated' };
+    }
+    else{
+      return { status: false, msg: 'Not authenticated' };
+    }
+    //Remove this later
     if (response.data['is_authenticated']) {
       return { status: true, msg: 'Authenticated' };
     } else {

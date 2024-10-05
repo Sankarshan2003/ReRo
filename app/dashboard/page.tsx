@@ -4,7 +4,7 @@
 import { redirect } from 'next/navigation';
 //import axios from 'axios';
 import checkCred from '../functions/functions';
-
+import CodeEditor from '../ui/CodeEditor';
 export default async function Page() {
   const res = await checkCred()
   console.log(res)
@@ -40,6 +40,7 @@ export default async function Page() {
   }
 */
   return (
-    <p>Divvvvvvvvv</p>
+    <CodeEditor></CodeEditor>
+    //<ToggleButton onClick={handleClick}></ToggleButton>
   )
 }
